@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARTI Terminal - Embedding Examples</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    h1 {
+      color: #00ff41;
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+      background: #0a0a0a;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #0a0a0a;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #00ff41;
+    }
+
+    .example-box {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    pre {
+      background: #0a0a0a;
+      color: #00ff41;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    code {
+      background: #0a0a0a;
+      color: #00ff41;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    .demo-container {
+      margin: 30px 0;
+      min-height: 600px;
+    }
+
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .info {
+      background: #d1ecf1;
+      border: 1px solid #0c5460;
+      border-left: 4px solid #0c5460;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    ul {
+      line-height: 1.8;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🖥️ ARTI Terminal - Embedding Guide</h1>
+
+  <p>This page demonstrates different ways to embed the ARTI terminal component on your website.</p>
+
+  <div class="warning">
+    <strong>⚠️ Security Note:</strong> Never expose API keys in client-side code. Use server-side proxies or build-time environment variable injection for production deployments.
+  </div>
+
+  <!-- Example 1: Direct Script Include -->
+  <h2>Method 1: Direct Script Include</h2>
+
+  <div class="example-box">
+    <p>The simplest way to embed the terminal is to include all necessary scripts directly in your HTML:</p>
+
+    <pre>&lt;!-- Include JetBrains Mono font --&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"&gt;
+
+&lt;!-- Include terminal styles --&gt;
+&lt;link rel="stylesheet" href="https://yourdomain.com/terminal.css"&gt;
+
+&lt;!-- Terminal container --&gt;
+&lt;div id="arti-terminal"&gt;&lt;/div&gt;
+
+&lt;!-- Include scripts --&gt;
+&lt;script src="https://yourdomain.com/config.js"&gt;&lt;/script&gt;
+&lt;script src="https://yourdomain.com/slack-logger.js"&gt;&lt;/script&gt;
+&lt;script src="https://yourdomain.com/ai-handler.js"&gt;&lt;/script&gt;
+&lt;script src="https://yourdomain.com/terminal.js"&gt;&lt;/script&gt;
+
+&lt;!-- Initialize terminal --&gt;
+&lt;script&gt;
+  // Set environment variables (use your build system to inject these securely)
+  window.GEMINI_API_KEY = 'YOUR_API_KEY';
+  window.SLACK_WEBHOOK_URL = 'YOUR_WEBHOOK_URL';
+
+  // Initialize
+  const slackLogger = new SlackLogger(window.SLACK_WEBHOOK_URL, CONFIG.slack);
+  const aiHandler = new GeminiAIHandler(window.GEMINI_API_KEY, CONFIG.ai.systemPrompt);
+  const terminal = new ArtiTerminal('arti-terminal', CONFIG, slackLogger, aiHandler);
+&lt;/script&gt;</pre>
+  </div>
+
+  <!-- Example 2: iframe Embed -->
+  <h2>Method 2: iframe Embed</h2>
+
+  <div class="example-box">
+    <p>For complete isolation and easier deployment, use an iframe:</p>
+
+    <pre>&lt;iframe
+  src="https://yourdomain.com/terminal/"
+  width="100%"
+  height="700px"
+  frameborder="0"
+  style="border: none; border-radius: 8px; box-shadow: 0 10px 50px rgba(0,0,0,0.3);"
+  title="ARTI Terminal Console"
+  allow="clipboard-write"
+&gt;&lt;/iframe&gt;</pre>
+
+    <div class="info">
+      <strong>Benefits of iframe:</strong>
+      <ul>
+        <li>Complete style isolation (no CSS conflicts)</li>
+        <li>Easier to update (change iframe src)</li>
+        <li>Better security separation</li>
+        <li>Can be embedded on any website</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Example 3: NPM Package (Future) -->
+  <h2>Method 3: As NPM Package</h2>
+
+  <div class="example-box">
+    <p>For React/Vue/Angular applications, you can package this as a module:</p>
+
+    <pre>// Install package
+npm install arti-terminal
+
+// Import in your React app
+import ArtiTerminal from 'arti-terminal';
+import 'arti-terminal/dist/terminal.css';
+
+function App() {
+  return (
+    &lt;div className="App"&gt;
+      &lt;ArtiTerminal
+        geminiApiKey={process.env.REACT_APP_GEMINI_API_KEY}
+        slackWebhookUrl={process.env.REACT_APP_SLACK_WEBHOOK_URL}
+      /&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+
+    <div class="info">
+      <strong>Note:</strong> NPM package distribution requires additional bundling setup (webpack/rollup). See README for details.
+    </div>
+  </div>
+
+  <!-- Example 4: CDN Bundle -->
+  <h2>Method 4: Single Bundle via CDN</h2>
+
+  <div class="example-box">
+    <p>Create a single bundled JavaScript file for easy CDN hosting:</p>
+
+    <pre>&lt;!-- Single bundle include --&gt;
+&lt;link href="https://cdn.yourdomain.com/arti-terminal/latest/terminal.min.css" rel="stylesheet"&gt;
+&lt;script src="https://cdn.yourdomain.com/arti-terminal/latest/terminal.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Initialize --&gt;
+&lt;div id="arti-terminal"&gt;&lt;/div&gt;
+&lt;script&gt;
+  ArtiTerminal.init({
+    containerId: 'arti-terminal',
+    geminiApiKey: 'YOUR_API_KEY',
+    slackWebhookUrl: 'YOUR_WEBHOOK_URL',
+  });
+&lt;/script&gt;</pre>
+
+    <div class="warning">
+      <strong>Build Required:</strong> This method requires bundling all files into a single minified JavaScript file using webpack, rollup, or similar.
+    </div>
+  </div>
+
+  <!-- Example 5: WordPress Plugin -->
+  <h2>Method 5: WordPress Shortcode</h2>
+
+  <div class="example-box">
+    <p>For WordPress sites, you can create a shortcode:</p>
+
+    <pre>// In your theme's functions.php or custom plugin
+function arti_terminal_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'height' => '600px',
+    ), $atts);
+
+    wp_enqueue_style('arti-terminal', get_template_directory_uri() . '/terminal.css');
+    wp_enqueue_script('arti-config', get_template_directory_uri() . '/config.js', array(), '1.0', true);
+    wp_enqueue_script('arti-slack', get_template_directory_uri() . '/slack-logger.js', array(), '1.0', true);
+    wp_enqueue_script('arti-ai', get_template_directory_uri() . '/ai-handler.js', array(), '1.0', true);
+    wp_enqueue_script('arti-terminal', get_template_directory_uri() . '/terminal.js', array(), '1.0', true);
+
+    return '&lt;div id="arti-terminal" style="height: ' . esc_attr($atts['height']) . '"&gt;&lt;/div&gt;';
+}
+add_shortcode('arti_terminal', 'arti_terminal_shortcode');
+
+// Usage in posts/pages:
+[arti_terminal height="700px"]</pre>
+  </div>
+
+  <!-- Live Demo -->
+  <h2>Live Demo</h2>
+
+  <div class="demo-container">
+    <div id="arti-terminal"></div>
+  </div>
+
+  <!-- Include actual terminal -->
+  <link rel="stylesheet" href="terminal.css">
+  <script src="config.js"></script>
+  <script src="slack-logger.js"></script>
+  <script src="ai-handler.js"></script>
+  <script src="terminal.js"></script>
+
+  <script>
+    // Initialize demo terminal
+    const ENV = {
+      GEMINI_API_KEY: window.GEMINI_API_KEY || '',
+      SLACK_WEBHOOK_URL: window.SLACK_WEBHOOK_URL || '',
+    };
+
+    let slackLogger = null;
+    let aiHandler = null;
+
+    if (ENV.SLACK_WEBHOOK_URL) {
+      slackLogger = new SlackLogger(ENV.SLACK_WEBHOOK_URL, CONFIG.slack);
+    }
+
+    if (ENV.GEMINI_API_KEY) {
+      aiHandler = new GeminiAIHandler(ENV.GEMINI_API_KEY, CONFIG.ai.systemPrompt);
+    }
+
+    const terminal = new ArtiTerminal('arti-terminal', CONFIG, slackLogger, aiHandler);
+  </script>
+
+  <!-- Configuration Tips -->
+  <h2>Configuration & Deployment Tips</h2>
+
+  <div class="example-box">
+    <h3>Environment Variables</h3>
+    <ul>
+      <li><strong>Vercel:</strong> Add env vars in project settings, access via <code>process.env.GEMINI_API_KEY</code></li>
+      <li><strong>Netlify:</strong> Add in Build & Deploy settings, inject via <code>_redirects</code> or build script</li>
+      <li><strong>Cloudflare Pages:</strong> Set in Workers & Pages settings, access in Functions</li>
+      <li><strong>Custom Server:</strong> Use server-side templating to inject variables</li>
+    </ul>
+
+    <h3>Security Best Practices</h3>
+    <ul>
+      <li>Never commit <code>.env</code> file to version control</li>
+      <li>Use server-side proxy for Gemini API calls (recommended for production)</li>
+      <li>Implement rate limiting on your backend</li>
+      <li>Sanitize all user inputs before logging to Slack</li>
+      <li>Use HTTPS for all deployments</li>
+      <li>Implement CORS restrictions</li>
+    </ul>
+
+    <h3>Performance Optimization</h3>
+    <ul>
+      <li>Minify CSS and JavaScript files</li>
+      <li>Use CDN for static assets</li>
+      <li>Enable gzip/brotli compression</li>
+      <li>Lazy load AI handler if not immediately needed</li>
+      <li>Cache font files locally</li>
+    </ul>
+  </div>
+
+  <!-- Customization Guide -->
+  <h2>Customization</h2>
+
+  <div class="example-box">
+    <h3>Changing Colors</h3>
+    <p>Edit CSS variables in <code>terminal.css</code>:</p>
+
+    <pre>:root {
+  --terminal-bg: #0a0a0a;       /* Background color */
+  --terminal-green: #00ff41;     /* Primary text color */
+  --terminal-amber: #ffb000;     /* Accent color */
+  --terminal-glow: 0 0 5px currentColor;
+  --scanline-opacity: 0.05;
+}</pre>
+
+    <h3>Customizing Content</h3>
+    <p>Edit <code>config.js</code> to change:</p>
+    <ul>
+      <li>ASCII art header</li>
+      <li>Welcome message</li>
+      <li>Command responses</li>
+      <li>AI system prompt</li>
+      <li>Professional information</li>
+    </ul>
+
+    <h3>Adding New Commands</h3>
+    <p>Add new commands in <code>config.js</code>:</p>
+
+    <pre>commands: {
+  mycommand: {
+    description: 'My custom command',
+    response: `
+      &lt;span class="section-header"&gt;My Custom Command&lt;/span&gt;
+      This is my custom response!
+    `.trim(),
+  },
+}</pre>
+
+    <p>Then handle it in <code>terminal.js</code> processCommand() method.</p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ARTI - Railway Engineering Console - AI-Powered Technical Assistant for Railway Signaling and ETCS Systems">
+  <meta name="keywords" content="railway engineering, ETCS, signaling systems, technical consulting, Arti Wolnica">
+  <meta name="author" content="Arti Wolnica">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ARTI - Railway Engineering Console">
+  <meta property="og:description" content="AI-Powered Technical Assistant for Railway Engineering & ETCS Systems">
+  <meta property="og:url" content="https://arturwolnica.com">
+
+  <title>ARTI Terminal - Railway Engineering Console</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="terminal.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #1a1a1a;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #terminal-root {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        align-items: flex-start;
+      }
+
+      #terminal-root {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal-root"></div>
+
+  <!-- Terminal Components -->
+  <script src="config.js"></script>
+  <script src="slack-logger.js"></script>
+  <script src="ai-handler.js"></script>
+  <script src="terminal.js"></script>
+
+  <!-- Initialize Terminal -->
+  <script>
+    // Configuration from environment variables (should be injected at build time)
+    // For local development, you can hardcode these temporarily
+    const ENV = {
+      GEMINI_API_KEY: window.GEMINI_API_KEY || '',
+      SLACK_WEBHOOK_URL: window.SLACK_WEBHOOK_URL || '',
+    };
+
+    // Initialize components
+    let slackLogger = null;
+    let aiHandler = null;
+
+    // Initialize Slack Logger if webhook URL is provided
+    if (ENV.SLACK_WEBHOOK_URL) {
+      slackLogger = new SlackLogger(ENV.SLACK_WEBHOOK_URL, CONFIG.slack);
+      console.log('Slack logging initialized');
+    } else {
+      console.warn('Slack webhook not configured - logging disabled');
+    }
+
+    // Initialize AI Handler if API key is provided
+    if (ENV.GEMINI_API_KEY) {
+      aiHandler = new GeminiAIHandler(ENV.GEMINI_API_KEY, CONFIG.ai.systemPrompt);
+      console.log('AI handler initialized');
+    } else {
+      console.warn('Gemini API key not configured - AI features disabled');
+    }
+
+    // Initialize Terminal
+    const terminal = new ArtiTerminal('terminal-root', CONFIG, slackLogger, aiHandler);
+
+    // Expose terminal globally for debugging
+    window.artiTerminal = terminal;
+
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        console.log('Page hidden - session may timeout');
+      }
+    });
+
+    // Analytics helper (optional - can be integrated with GA, Plausible, etc.)
+    function trackEvent(eventName, eventData) {
+      // Placeholder for analytics integration
+      console.log('Analytics event:', eventName, eventData);
+
+      // Example: Google Analytics
+      // if (typeof gtag !== 'undefined') {
+      //   gtag('event', eventName, eventData);
+      // }
+    }
+
+    // Track terminal initialization
+    trackEvent('terminal_initialized', {
+      timestamp: new Date().toISOString(),
+      features: {
+        slack_logging: !!slackLogger,
+        ai_enabled: !!aiHandler,
+      },
+    });
+  </script>
+
+  <!--
+    Environment Variable Injection Point
+
+    For production deployment, inject environment variables here using your build system.
+
+    Examples:
+
+    1. Vercel/Netlify (using build-time replacement):
+       <script>
+         window.GEMINI_API_KEY = '${GEMINI_API_KEY}';
+         window.SLACK_WEBHOOK_URL = '${SLACK_WEBHOOK_URL}';
+       </script>
+
+    2. Server-side rendering (PHP, Node, etc.):
+       <script>
+         window.GEMINI_API_KEY = '<?php echo getenv('GEMINI_API_KEY'); ?>';
+         window.SLACK_WEBHOOK_URL = '<?php echo getenv('SLACK_WEBHOOK_URL'); ?>';
+       </script>
+
+    3. Cloudflare Workers/Pages:
+       Use environment variable injection in wrangler.toml
+
+    SECURITY WARNING:
+    - NEVER commit actual API keys to version control
+    - NEVER expose sensitive keys in client-side code
+    - Use server-side proxy for API calls in production
+    - Implement CORS restrictions on your backend
+    - Use environment variables and build-time injection only
+  -->
+
+</body>
+</html>

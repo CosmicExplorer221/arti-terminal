@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARTI Terminal - Test Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="terminal.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #1a1a1a;
+    }
+    .test-info {
+      max-width: 1200px;
+      margin: 0 auto 20px;
+      padding: 20px;
+      background: #2a2a2a;
+      color: #00ff41;
+      border-radius: 8px;
+      font-family: monospace;
+    }
+    .test-info h2 {
+      margin-top: 0;
+      color: #ffb000;
+    }
+    .test-status {
+      display: flex;
+      gap: 20px;
+      margin-top: 15px;
+    }
+    .status-item {
+      padding: 10px;
+      background: #0a0a0a;
+      border-radius: 4px;
+    }
+    .status-ok {
+      color: #00ff41;
+    }
+    .status-warn {
+      color: #ffb000;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-info">
+    <h2>ARTI Terminal - Test Page</h2>
+    <p>This page tests the terminal component functionality.</p>
+    <div class="test-status">
+      <div class="status-item">
+        <strong>Config:</strong> <span id="config-status" class="status-warn">Loading...</span>
+      </div>
+      <div class="status-item">
+        <strong>Terminal JS:</strong> <span id="terminal-status" class="status-warn">Loading...</span>
+      </div>
+      <div class="status-item">
+        <strong>AI Handler:</strong> <span id="ai-status" class="status-warn">Loading...</span>
+      </div>
+      <div class="status-item">
+        <strong>Slack Logger:</strong> <span id="slack-status" class="status-warn">Loading...</span>
+      </div>
+    </div>
+    <p style="margin-top: 15px; font-size: 0.9em; color: #888;">
+      Note: AI and Slack features require API keys. Set environment variables to test those features.
+    </p>
+  </div>
+
+  <div id="terminal-root"></div>
+
+  <script src="config.js"></script>
+  <script>
+    document.getElementById('config-status').innerHTML = '<span class="status-ok">✓ Loaded</span>';
+  </script>
+
+  <script src="slack-logger.js"></script>
+  <script>
+    document.getElementById('slack-status').innerHTML = '<span class="status-ok">✓ Loaded</span>';
+  </script>
+
+  <script src="ai-handler.js"></script>
+  <script>
+    document.getElementById('ai-status').innerHTML = '<span class="status-ok">✓ Loaded</span>';
+  </script>
+
+  <script src="terminal.js"></script>
+  <script>
+    document.getElementById('terminal-status').innerHTML = '<span class="status-ok">✓ Loaded</span>';
+  </script>
+
+  <script>
+    // Test initialization
+    console.log('=== ARTI Terminal Test ===');
+    console.log('CONFIG loaded:', typeof CONFIG !== 'undefined');
+    console.log('SlackLogger loaded:', typeof SlackLogger !== 'undefined');
+    console.log('GeminiAIHandler loaded:', typeof GeminiAIHandler !== 'undefined');
+    console.log('ArtiTerminal loaded:', typeof ArtiTerminal !== 'undefined');
+
+    // Initialize terminal (without API keys for basic testing)
+    const ENV = {
+      GEMINI_API_KEY: window.GEMINI_API_KEY || '',
+      SLACK_WEBHOOK_URL: window.SLACK_WEBHOOK_URL || '',
+    };
+
+    let slackLogger = null;
+    let aiHandler = null;
+
+    if (ENV.SLACK_WEBHOOK_URL) {
+      slackLogger = new SlackLogger(ENV.SLACK_WEBHOOK_URL, CONFIG.slack);
+      console.log('✓ Slack logger initialized');
+    } else {
+      console.warn('⚠ Slack webhook not configured');
+    }
+
+    if (ENV.GEMINI_API_KEY) {
+      aiHandler = new GeminiAIHandler(ENV.GEMINI_API_KEY, CONFIG.ai.systemPrompt);
+      console.log('✓ AI handler initialized');
+    } else {
+      console.warn('⚠ Gemini API key not configured');
+    }
+
+    try {
+      const terminal = new ArtiTerminal('terminal-root', CONFIG, slackLogger, aiHandler);
+      console.log('✓ Terminal initialized successfully!');
+      console.log('=== Test Complete ===');
+      console.log('Try typing: /help');
+    } catch (error) {
+      console.error('✗ Terminal initialization failed:', error);
+    }
+  </script>
+</body>
+</html>
