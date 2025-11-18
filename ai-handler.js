@@ -8,8 +8,8 @@ class GeminiAIHandler {
     this.apiKey = apiKey;
     this.systemPrompt = systemPrompt;
     this.conversationHistory = [];
-    // Using Gemini 2.0 Flash (experimental) - latest available model
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
+    // Using Gemini 2.5 Flash - latest model
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview:generateContent';
   }
 
   /**
