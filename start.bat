@@ -18,15 +18,22 @@ echo [1/3] Checking Node.js installation...
 node --version
 echo.
 
-echo [2/3] Starting server on http://localhost:3000
+echo [2/4] Starting Slack proxy on http://localhost:3001
+start /B node slack-proxy.js
+echo.
+
+echo [3/4] Starting static server on http://localhost:3000
 echo.
 echo Terminal will open in your browser automatically.
-echo Press Ctrl+C to stop the server.
+echo Press Ctrl+C to stop both servers.
 echo.
 echo ================================================
 echo.
 
-REM Start server and open browser
+REM Wait a moment for proxy to start
+timeout /t 2 /nobreak >nul
+
+REM Start browser and static server
 start http://localhost:3000
 npx serve -p 3000
 

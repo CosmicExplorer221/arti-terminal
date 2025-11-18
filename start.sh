@@ -17,16 +17,32 @@ echo "[1/3] Checking Node.js installation..."
 node --version
 echo ""
 
-echo "[2/3] Starting server on http://localhost:3000"
+echo "[2/4] Starting Slack proxy on http://localhost:3001"
+node slack-proxy.js &
+PROXY_PID=$!
+echo ""
+
+echo "[3/4] Starting static server on http://localhost:3000"
 echo ""
 echo "Terminal will open in your browser automatically."
-echo "Press Ctrl+C to stop the server."
+echo "Press Ctrl+C to stop both servers."
 echo ""
 echo "================================================"
 echo ""
 
-# Open browser (try different commands for different systems)
+# Cleanup function to kill both processes
+cleanup() {
+    echo ""
+    echo "Stopping servers..."
+    kill $PROXY_PID 2>/dev/null
+    exit 0
+}
+trap cleanup INT TERM
+
+# Wait for proxy to start
 sleep 2
+
+# Open browser (try different commands for different systems)
 if command -v xdg-open &> /dev/null; then
     xdg-open http://localhost:3000 &
 elif command -v open &> /dev/null; then

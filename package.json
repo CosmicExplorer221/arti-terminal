@@ -4,7 +4,9 @@
   "description": "Retro terminal web component for arturwolnica.com with AI chat and Slack logging",
   "main": "terminal.js",
   "scripts": {
-    "start": "npx serve -p 3000",
+    "start": "npm run start:proxy & npx serve -p 3000",
+    "start:proxy": "node slack-proxy.js",
+    "start:static": "npx serve -p 3000",
     "dev": "npx serve -p 3000 --no-clipboard",
     "serve": "npx serve",
     "build": "echo 'No build step required - using vanilla JavaScript'",
