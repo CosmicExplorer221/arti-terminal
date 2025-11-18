@@ -4,12 +4,13 @@
  */
 
 class GeminiAIHandler {
-  constructor(apiKey, systemPrompt) {
+  constructor(apiKey, systemPrompt, modelName = null) {
     this.apiKey = apiKey;
     this.systemPrompt = systemPrompt;
     this.conversationHistory = [];
-    // Using Gemini 2.5 Flash - latest model
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+    // Use model from env.js or default to Gemini 2.5 Flash
+    const model = modelName || window.GEMINI_MODEL || 'gemini-2.5-flash';
+    this.baseUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   }
 
   /**
