@@ -9,7 +9,7 @@ class GeminiAIHandler {
     this.systemPrompt = systemPrompt;
     this.conversationHistory = [];
     // Using Gemini 2.5 Flash - latest model
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview:generateContent';
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
   }
 
   /**
